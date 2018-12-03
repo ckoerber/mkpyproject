@@ -2,7 +2,7 @@
 """Setup file for {project_name}
 """
 __author__ = "{author}"
-__version__ = "0.1"
+__version__ = "0.1.0"
 
 from os import path
 

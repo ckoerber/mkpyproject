@@ -4,7 +4,7 @@
 See also https://github.com/pypa/sampleproject
 """
 __author__ = "Christopher Körber"
-__version__ = "0.1"
+__version__ = "0.1.0"
 
 from os import path
 

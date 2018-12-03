@@ -47,7 +47,8 @@ Some files like `setup.py` come with predefined standard values.
 ## Authors
 * Christopher Körber
 
-## Contribute
+## Contributing
+See [Contributing.md](Contributing.md)
 
 ## License
 See [LICENSE.md](LICENSE.md)
