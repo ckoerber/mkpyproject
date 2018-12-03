@@ -1,7 +1,7 @@
 # mkpyproject
 Module for creating new python projects with a minimal amount of required files.
 
-[[http://www.ckoerber.com/static/images/misc/mkpyproject-demo.gif|alt=demo]]
+![Code demonstration](http://www.ckoerber.com/static/images/misc/mkpyproject-demo.gif)
 ## Install
 Install via pip
 ```bash
