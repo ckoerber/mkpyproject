@@ -55,7 +55,12 @@ class PyProject:
     """Project class for creating predefined folders and writing files.
     """
 
-    def __init__(self, project_name: str, author: Optional[str] = None) -> None:
+    def __init__(
+        self,
+        project_name: str,
+        author: Optional[str] = None,
+        verbose: Optional[int] = 0,
+    ) -> None:
         """Initializes a project with a given name and author
 
             Arguments
@@ -66,9 +71,13 @@ class PyProject:
 
                 author: str
                     Name of the project author.
+
+                verbose: int
+                    Print additional output if `verbose > 0`.
         """
         self.project_name = project_name
         self.author = author
+        self.verbose = verbose
 
     def make_project_dirs(self) -> None:
         """Creates project directories.
@@ -144,9 +153,8 @@ class PyProject:
         with open(os.path.join(FILES_DIR, "setup.py"), "r") as inp:
             setup_text = inp.read()
 
-        setup_text = setup_text.replace("{self.project_name}", self.project_name)
-        if self.author:
-            setup_text = setup_text.replace("{author}", self.author)
+        setup_text = setup_text.replace(r"{project_name}", self.project_name)
+        setup_text = setup_text.replace("{author}", self.author)
 
         write_file(self.project_name, "setup.py", setup_text)
 
@@ -159,7 +167,8 @@ class PyProject:
         with open(os.path.join(FILES_DIR, "README.md"), "r") as inp:
             readme_text = inp.read()
 
-        readme_text = readme_text.replace("{self.project_name}", self.project_name)
+        print(readme_text)
+        readme_text = readme_text.replace(r"{project_name}", self.project_name)
         if self.author:
             readme_text = readme_text.replace("{author}", self.author)
 
