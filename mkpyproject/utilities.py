@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Utility functions for mkpyproject
 """
 from typing import Optional
@@ -17,12 +18,28 @@ def write_file(
 
     Arguments
     ---------
+        dir_name: str
+            The directory of the file.
+
+        file_name: str
+            The name of the file (including extension).
+
+        content: str
+            The content of the file.
+
+        overwrite: bool
+            Overwrites file if it already exists, otherwise raises exception.
 
     Raises
     ------
+        FileNotFoundError:
+            If the directory does not exist.
+
+        FileExistsError:
+            File exists and `overwrite` is False.
     """
     if not os.path.exists(dir_name):
-        raise ValueError(f"Directory '{dir_name}' does not exist.")
+        raise FileNotFoundError(f"Directory '{dir_name}' does not exist.")
 
     file_dir = os.path.join(dir_name, file_name)
 
@@ -34,68 +51,116 @@ def write_file(
         out.write(content)
 
 
-def make_project_dirs(project_name: str) -> None:
-    """Creates project directories
+class PyProject:
+    """Project class for creating predefined folders and writing files.
     """
-    os.mkdir(project_name)
 
-    for dir_name in [project_name, "tests"]:
-        this_dir = os.path.join(project_name, dir_name)
-        os.mkdir(this_dir)
-        write_file(this_dir, "__init__.py")
+    def __init__(self, project_name: str, author: Optional[str] = None) -> None:
+        """Initializes a project with a given name and author
 
-    for dir_name in ["notebooks", "docs"]:
-        this_dir = os.path.join(project_name, dir_name)
-        os.mkdir(this_dir)
+            Arguments
+            ---------
+                project_name: str
+                    Name of the python project.
 
 
-def write_license(
-    directory: str,
-    license_kind: str = "MIT",
-    author: Optional[str] = None,
-    year: Optional[int] = None,
-) -> None:
-    """Writes license into project root directory
-    """
-    if license_kind == "MIT":
-        with open(os.path.join(FILES_DIR, "LICENSE-MIT.md"), "r") as inp:
-            license_text = inp.read()
-    else:
-        raise ValueError("Unknown license '{license_kind}'.")
+                author: str
+                    Name of the project author.
+        """
+        self.project_name = project_name
+        self.author = author
 
-    if author:
-        license_text = license_text.replace("{COPYRIGHT HOLDER}", author)
-    if year:
-        license_text = license_text.replace("{YEAR}", year)
+    def make_project_dirs(self) -> None:
+        """Creates project directories.
 
-    write_file(directory, "LICENSE.md", license_text)
+        Creates the project directories
+        """
+        if not self.project_name.isidentifier():
+            raise ValueError(
+                "Project name must fulfill PEP8"
+                " (`self.project_name.isidentifier() == True`)"
+            )
 
+        os.mkdir(self.project_name)
 
-def write_gitignore(project_name: str):
-    """
-    """
-    with open(os.path.join(FILES_DIR, ".gitignore"), "r") as inp:
-        gitignore_text = inp.read()
-    write_file(project_name, ".gitignore", gitignore_text)
+        for dir_name in [self.project_name, "tests"]:
+            this_dir = os.path.join(self.project_name, dir_name)
+            os.mkdir(this_dir)
+            write_file(this_dir, "__init__.py")
 
+        for dir_name in ["notebooks", "docs"]:
+            this_dir = os.path.join(self.project_name, dir_name)
+            os.mkdir(this_dir)
 
-def write_requirements(project_name: str):
-    """
-    """
-    write_file(project_name, "requirements.txt")
+    def write_license(
+        self, license_kind: str = "MIT", year: Optional[int] = None
+    ) -> None:
+        """Creates file 'LICENSE.md' in project root.
 
+        Imports information from 'files/LICENSE-{license_kind}.md' and substitudes
+        project author and year if possible.
 
-def write_setup(project_name: str):
-    """
-    """
-    with open(os.path.join(FILES_DIR, "setup.py"), "r") as inp:
-        setup_text = inp.read()
-    write_file(project_name, "setup.py", setup_text)
+        Arguments
+        ---------
+            license_kind: str
+                Kind of license. Currently only 'MIT' is implemented.
 
+            year: int
+                Year of the copyright. If `None` year will be the current year.
+        """
+        if license_kind == "MIT":
+            with open(os.path.join(FILES_DIR, "LICENSE-MIT.md"), "r") as inp:
+                license_text = inp.read()
+        else:
+            raise ValueError("Unknown license '{license_kind}'.")
 
-def write_readme(project_name: str):
-    """
-    """
-    with open(os.path.join(FILES_DIR, "README.md"), "r") as inp:
-        readme_text = inp.read()
-    write_file(project_name, "README.md", readme_text)
+        if self.author:
+            license_text = license_text.replace("{COPYRIGHT HOLDER}", self.author)
+        if year:
+            license_text = license_text.replace("{YEAR}", str(year))
+
+        write_file(self.project_name, "LICENSE.md", license_text)
+
+    def write_gitignore(self):
+        """Creates file '.gitignore' in project root.
+
+        Imports information from 'files/.gitignore'.
+        """
+        with open(os.path.join(FILES_DIR, ".gitignore"), "r") as inp:
+            gitignore_text = inp.read()
+        write_file(self.project_name, ".gitignore", gitignore_text)
+
+    def write_requirements(self):
+        """Creates empty file 'requirements.txt' in project root.
+        """
+        write_file(self.project_name, "requirements.txt")
+
+    def write_setup(self):
+        """Creates file 'setup.py' in project root.
+
+        Imports information from 'files/setup.py' and substitudes project name and
+        author if possible.
+        """
+        with open(os.path.join(FILES_DIR, "setup.py"), "r") as inp:
+            setup_text = inp.read()
+
+        setup_text = setup_text.replace("{self.project_name}", self.project_name)
+        if self.author:
+            setup_text = setup_text.replace("{author}", self.author)
+
+        write_file(self.project_name, "setup.py", setup_text)
+
+    def write_readme(self):
+        """Creates file 'README.md' in project root.
+
+        Imports information from 'files/README.md' and substitudes project name and
+        author if possible.
+        """
+        with open(os.path.join(FILES_DIR, "README.md"), "r") as inp:
+            readme_text = inp.read()
+
+        readme_text = readme_text.replace("{self.project_name}", self.project_name)
+        if self.author:
+            readme_text = readme_text.replace("{author}", self.author)
+
+        write_file(self.project_name, "README.md", readme_text)

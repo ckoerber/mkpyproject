@@ -1,8 +1,9 @@
+# -*- coding: utf-8 -*-
 """Setup file for mkpyproject
 
 See also https://github.com/pypa/sampleproject
 """
-__author__ = "Christopher Koerber"
+__author__ = "Christopher Körber"
 __version__ = "0.1"
 
 from os import path

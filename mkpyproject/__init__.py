@@ -1,12 +1,13 @@
+# -*- coding: utf-8 -*-
 """Script to create python projects and required files
 """
 import argparse
 
-import mkpyproject.utilities as ut
+from mkpyproject.utilities import PyProject
 
 
 def main() -> int:
-    """Creates directories and files for the new python project
+    """Creates directories and files for the new python project.
     """
     parser = argparse.ArgumentParser(
         description="Create python project directory and supplemental files."
@@ -15,21 +16,18 @@ def main() -> int:
         "--name",
         "-n",
         metavar="project_name",
-        help="Name of the python project",
+        help="Name of the python project.",
         type=str,
     )
-    parser.add_argument(
-        "--verbose", "-v", action="count", help="Allow descriptional output"
-    )
+    parser.add_argument("--verbose", "-v", action="count", help="Allow verbose output.")
 
     args = parser.parse_args()
-    print(args.project_name, args.verbose)
 
-    ut.make_project_dirs(args.project_name)
-    ut.write_license(args.project_name, "MIT")
-    ut.write_gitignore(args.project_name)
-    ut.write_requirements(args.project_name)
-    ut.write_setup(args.project_name)
-    ut.write_readme(args.project_name)
+    this_project = PyProject(args.project_name, args.author)
 
-    return 1
+    this_project.make_project_dirs()
+    this_project.write_license("MIT")
+    this_project.write_gitignore()
+    this_project.write_requirements()
+    this_project.write_setup()
+    this_project.write_readme()
