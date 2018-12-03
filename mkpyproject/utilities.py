@@ -169,7 +169,6 @@ class PyProject:
         with open(os.path.join(FILES_DIR, "README.md"), "r") as inp:
             readme_text = inp.read()
 
-        print(readme_text)
         readme_text = readme_text.replace(r"{project_name}", self.project_name)
         if self.author:
             readme_text = readme_text.replace("{author}", self.author)
