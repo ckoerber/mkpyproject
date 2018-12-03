@@ -3,6 +3,7 @@
 """
 from typing import Optional
 import os
+from datetime import datetime
 
 FILE_DIR = os.path.dirname(os.path.abspath(__file__))
 FILES_DIR = os.path.join(FILE_DIR, "files")
@@ -125,8 +126,9 @@ class PyProject:
 
         if self.author:
             license_text = license_text.replace("{COPYRIGHT HOLDER}", self.author)
-        if year:
-            license_text = license_text.replace("{YEAR}", str(year))
+
+        year = year or datetime.now().year
+        license_text = license_text.replace("{YEAR}", str(year))
 
         write_file(self.project_name, "LICENSE.md", license_text)
 
@@ -154,7 +156,7 @@ class PyProject:
             setup_text = inp.read()
 
         setup_text = setup_text.replace(r"{project_name}", self.project_name)
-        setup_text = setup_text.replace("{author}", self.author)
+        setup_text = setup_text.replace("{author}", self.author or "None")
 
         write_file(self.project_name, "setup.py", setup_text)
 
