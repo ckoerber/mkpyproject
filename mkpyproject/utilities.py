@@ -4,6 +4,23 @@
 from typing import Optional
 import os
 from datetime import datetime
+import logging
+
+
+def _get_logger() -> logging.Logger:
+    """Creates a logger
+    """
+    logger = logging.getLogger(__name__)
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.DEBUG)
+    formatter = logging.Formatter("[%(asctime)s] %(message)s")
+    ch.setFormatter(formatter)
+    logger.addHandler(ch)
+    return logger
+
+
+LOGGER = _get_logger()
+
 
 FILE_DIR = os.path.dirname(os.path.abspath(__file__))
 FILES_DIR = os.path.join(FILE_DIR, "files")
@@ -39,6 +56,7 @@ def write_file(
         FileExistsError:
             File exists and `overwrite` is False.
     """
+    LOGGER.info("Writing '%s/%s' with overwrite = %r", dir_name, file_name, overwrite)
     if not os.path.exists(dir_name):
         raise FileNotFoundError(f"Directory '{dir_name}' does not exist.")
 
@@ -80,6 +98,11 @@ class PyProject:
         self.author = author
         self.verbose = verbose
 
+        if verbose == 1:
+            LOGGER.setLevel(logging.INFO)
+        if verbose > 1:
+            LOGGER.setLevel(logging.DEBUG)
+
     def make_project_dirs(self) -> None:
         """Creates project directories.
 
@@ -91,15 +114,18 @@ class PyProject:
                 " (`self.project_name.isidentifier() == True`)"
             )
 
+        LOGGER.info("Creating '%s'.", self.project_name)
         os.mkdir(self.project_name)
 
         for dir_name in [self.project_name, "tests"]:
             this_dir = os.path.join(self.project_name, dir_name)
+            LOGGER.info("Creating '%s'.", this_dir)
             os.mkdir(this_dir)
             write_file(this_dir, "__init__.py")
 
         for dir_name in ["notebooks", "docs"]:
             this_dir = os.path.join(self.project_name, dir_name)
+            LOGGER.info("Creating '%s'.", this_dir)
             os.mkdir(this_dir)
 
     def write_license(
