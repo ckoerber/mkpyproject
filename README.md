@@ -12,14 +12,17 @@ pip install [-e] [--user] .
 ## Run
 Once installed, the script can be run by
 ```bash
-usage: mkpyproject [-h] [--name project_name] [--verbose]
+usage: mkpyproject [-h] [--author author] [--verbose] project_name
 
 Create python project directory and supplemental files.
 
+positional arguments:
+  project_name          Name of the python project.
+
 optional arguments:
   -h, --help            show this help message and exit
-  --name project_name, -n project_name
-                        Name of the python project.
+  --author author, -a author
+                        Name of project author.
   --verbose, -v         Allow verbose output.
 ```
 This will create the python directory structure
@@ -32,6 +35,7 @@ project_name/
 |    |--- __init__.py
 |
 |--- docs/
+|--- notebooks/
 |--- requirements.txt
 |--- LICENSE.md
 |--- README.md
