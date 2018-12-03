@@ -16,7 +16,9 @@ def main() -> int:
     parser.add_argument(
         "--author", "-a", metavar="author", help="Name of project author.", type=str
     )
-    parser.add_argument("--verbose", "-v", action="count", help="Allow verbose output.")
+    parser.add_argument(
+        "--verbose", "-v", action="count", help="Allow verbose output.", default=0
+    )
 
     args = parser.parse_args()
 
