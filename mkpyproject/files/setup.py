@@ -25,7 +25,7 @@ setup(
     url=None,
     author=__author__,
     author_email=None,
-    keywords=None,
+    keywords=[],
     packages=find_packages(exclude=["docs", "tests"]),
     install_requires=REQUIREMENTS,
 )
