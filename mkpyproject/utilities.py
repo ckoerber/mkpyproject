@@ -3,6 +3,7 @@
 """
 from typing import Optional
 import os
+import re
 from datetime import datetime
 import logging
 
@@ -103,21 +104,28 @@ class PyProject:
         if verbose > 1:
             LOGGER.setLevel(logging.DEBUG)
 
+    @property
+    def project_name_clean(self) -> str:
+        """Converts project name to identifier if possible
+        """
+        return re.sub("[ \-]", "_", self.project_name.lower())
+
     def make_project_dirs(self) -> None:
         """Creates project directories.
 
         Creates the project directories
         """
-        if not self.project_name.isidentifier():
+        if not self.project_name_clean.isidentifier():
             raise ValueError(
                 "Project name must fulfill PEP8"
                 " (`self.project_name.isidentifier() == True`)"
             )
 
         LOGGER.info("Creating '%s'.", self.project_name)
-        os.mkdir(self.project_name)
+        if not os.path.exists(self.project_name):
+            os.mkdir(self.project_name)
 
-        for dir_name in [self.project_name, "tests"]:
+        for dir_name in [self.project_name_clean, "tests"]:
             this_dir = os.path.join(self.project_name, dir_name)
             LOGGER.info("Creating '%s'.", this_dir)
             os.mkdir(this_dir)
@@ -182,6 +190,9 @@ class PyProject:
             setup_text = inp.read()
 
         setup_text = setup_text.replace(r"{project_name}", self.project_name)
+        setup_text = setup_text.replace(
+            r"{project_name_clean}", self.project_name_clean
+        )
         setup_text = setup_text.replace("{author}", self.author or "None")
 
         write_file(self.project_name, "setup.py", setup_text)
